@@ -11,23 +11,45 @@
 
 	<script type="text/javascript">
 		Person = Backbone.Model.extend({
-				intialize: () => {
-					console.log("running");
+				//Inintialize is the model's constructor
+				initialize: function () {
+					
+					this.bind("change:firstName", () => {
+						console.log("'" + this.get("firstName") + "'"+ " is now the value for firstName");
+					});
+					//For validation checks
+					this.on("invalid", (model, error) => {
+						console.log(error);
+					});
 				},
 				defaults: {
 					firstName: "Bob",
 					lastName: "Hope",
 					showNotOn: "Make Room For Daddy"
+				},
+				validate: function (attributes) {
+					if(attributes.firstName === "No") {
+						//During a validation a return indicates there was an error. In it's absence, a success.
+						return "There is always hope.";
+					}
 				}
 		});
 		
 		let person = new Person();
+		console.log("Name: " + person.get("firstName") + " " + person.get("lastName") + "\n" + "On Show: " + person.get("showNotOn"));
 
+		//Validation is disabled by default and must be set to true
+		person.set("firstName", "No", {validate: true});
 		console.log("Name: " + person.get("firstName") + " " + person.get("lastName") + "\n" + "On Show: " + person.get("showNotOn"));
-		person.set("firstName", "No");
-		console.log("Name: " + person.get("firstName") + " " + person.get("lastName") + "\n" + "On Show: " + person.get("showNotOn"));
+
 		person.set({firstName: "All", showNotOn: "Lost"})
 		console.log("State of the World: " + person.get("firstName") + " " + person.get("lastName") + " " + person.get("showNotOn"));
+
+		//Read Only Attributes
+		console.log(person.toJSON());
+
+		//Writable Attributes
+		console.log(person.attributes);
 	</script>
 
 </body>
